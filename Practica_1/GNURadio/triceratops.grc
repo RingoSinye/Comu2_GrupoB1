@@ -45,6 +45,33 @@ blocks:
     coordinate: [184, 12]
     rotation: 0
     state: enabled
+- name: epy_block_0
+  id: epy_block
+  parameters:
+    _source_code: "\"\"\"\nEmbedded Python Blocks:\n\nEach time this file is saved,\
+      \ GRC will instantiate the first class it finds\nto get ports and parameters\
+      \ of your block. The arguments to __init__  will\nbe the parameters. All of\
+      \ them are required to have default values!\n\"\"\"\n\nimport numpy as np\n\
+      from gnuradio import gr\n\nclass blk (gr.sync_block):\n\n\tdef __init__(self)\
+      \ : # only default arguments here\n\t\tgr.sync_block.__init__(\n\t\tself ,\n\
+      \t\tname ='e_Acum', # will show up in GRC\n\t\tin_sig =[np.float32],\n\t\tout_sig\
+      \ =[np.float32]\n\t\t)\n\t\t\n\tdef work (self , input_items , output_items\
+      \ ):\n\t\tx = input_items[0] # Senial de entrada .\n\t\ty0 = output_items[0]\
+      \ # Senial acumulada\n\t\ty0[:] = np.cumsum(x)\n\t\t\n\t\treturn len (y0)\n"
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    _io_cache: ('e_Acum', 'blk', [], [('0', 'float', 1)], [('0', 'float', 1)], '',
+      [])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [944, 480.0]
+    rotation: 0
+    state: true
 connections: []
 
 metadata:
