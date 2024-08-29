@@ -9,25 +9,28 @@ be the parameters. All of them are required to have default values!
 import numpy as np
 from gnuradio import gr
 
-class Acumulador(gr.sync_block):
+class Diferenciador(gr.sync_block):
     def __init__(self):
         gr.sync_block.__init__(
             self,
-            name='Acumulador',  # Nombre que aparecerá en GRC
+            name='Diferenciador',  # Nombre que aparecerá en GRC
             in_sig=[np.float32],
             out_sig=[np.float32]
         )
-        self.acumulado = 0  # Estado del acumulador inicializado a 0
+        self.acum_anterior = 0
 
     def work(self, input_items, output_items):
         x = input_items[0]  # Señal de entrada
-        y0 = output_items[0]  # Señal acumulada
+        y0 = output_items[0]  # Señal de salida (derivada)
+        N = len(x)
+        
+        # Calcular la derivada
+        y0[0] = x[0] - self.acum_anterior
+        for i in range(1, N):
+            y0[i] = x[i] - x[i - 1]
 
-        # Calcula la suma acumulada para la entrada actual
-        y0[:] = np.cumsum(x) + self.acumulado
-
-        # Actualiza el acumulado con el último valor de la entrada
-        self.acumulado = y0[-1]
+        # Actualizar el valor acumulado
+        self.acum_anterior = x[N - 1]
 
         return len(y0)
 
