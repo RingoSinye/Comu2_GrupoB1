@@ -58,15 +58,16 @@ blocks:
     offset: '-1'
     phase: '0'
     samp_rate: samp_rate
+    showports: 'False'
     type: float
     waveform: analog.GR_SQR_WAVE
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [192, 556.0]
+    coordinate: [1320, 340.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: analog_sig_source_x_0_0
   id: analog_sig_source_x
   parameters:
@@ -80,15 +81,16 @@ blocks:
     offset: '-1'
     phase: '0'
     samp_rate: samp_rate
+    showports: 'False'
     type: float
     waveform: analog.GR_SQR_WAVE
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [192, 356.0]
+    coordinate: [1320, 140.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: analog_sig_source_x_0_0_0
   id: analog_sig_source_x
   parameters:
@@ -99,16 +101,40 @@ blocks:
     freq: '1000'
     maxoutbuf: '0'
     minoutbuf: '0'
-    offset: '-1'
+    offset: '0'
     phase: '0'
     samp_rate: samp_rate
+    showports: 'False'
     type: float
-    waveform: analog.GR_SQR_WAVE
+    waveform: analog.GR_SIN_WAVE
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [192, 164.0]
+    coordinate: [136, 132.0]
+    rotation: 0
+    state: enabled
+- name: analog_sig_source_x_0_1
+  id: analog_sig_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    amp: '2'
+    comment: ''
+    freq: '1000'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset: '0'
+    phase: '0'
+    samp_rate: samp_rate
+    showports: 'False'
+    type: float
+    waveform: analog.GR_SIN_WAVE
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [120, 388.0]
     rotation: 0
     state: enabled
 - name: blocks_throttle_0
@@ -127,7 +153,26 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [432, 596.0]
+    coordinate: [1560, 380.0]
+    rotation: 0
+    state: disabled
+- name: blocks_throttle_0_0
+  id: blocks_throttle
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    ignoretag: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_second: samp_rate
+    type: float
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [360, 428.0]
     rotation: 0
     state: enabled
 - name: blocks_throttle_0_1
@@ -146,9 +191,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [432, 396.0]
+    coordinate: [1560, 180.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: blocks_throttle_0_1_0
   id: blocks_throttle
   parameters:
@@ -165,7 +210,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [640, 212.0]
+    coordinate: [576, 172.0]
     rotation: 0
     state: enabled
 - name: epy_block_0
@@ -196,9 +241,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [736, 600.0]
+    coordinate: [1864, 384.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: epy_block_1
   id: epy_block
   parameters:
@@ -227,9 +272,366 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [712, 400.0]
+    coordinate: [1840, 184.0]
     rotation: 0
-    state: enabled
+    state: disabled
+- name: epy_block_2
+  id: epy_block
+  parameters:
+    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.sync_block):\n\
+      \    def __init__(self):\n        # Solo argumentos predeterminados aqu\xED\n\
+      \        gr.sync_block.__init__(\n            self,\n            name='Promedios_de_tiempos',\
+      \  # Aparecer\xE1 en GRC\n            in_sig=[np.float32],\n            out_sig=[np.float32,\
+      \ np.float32, np.float32, np.float32, np.float32]\n        )\n        self.acum_anterior\
+      \ = 0\n        self.Ntotales = 0\n        self.acum_anterior1 = 0\n        self.acum_anterior2\
+      \ = 0\n\n    def work(self, input_items, output_items):\n        x = input_items[0]\
+      \  # Se\xF1al de entrada\n        y0 = output_items[0]  # Promedio de la se\xF1\
+      al\n        y1 = output_items[1]  # Media de la se\xF1al\n        y2 = output_items[2]\
+      \  # RMS de la se\xF1al\n        y3 = output_items[3]  # Potencia promedio de\
+      \ la se\xF1al\n        y4 = output_items[4]  # Desviaci\xF3n est\xE1ndar de\
+      \ la se\xF1al\n\n        # C\xE1lculo del promedio\n        N = len(x)\n   \
+      \     self.Ntotales = self.Ntotales + N\n        acumulado = self.acum_anterior\
+      \ + np.cumsum(x)\n        self.acum_anterior = acumulado[N - 1]\n        y0[:]\
+      \ = acumulado / self.Ntotales\n\n        # C\xE1lculo de la media cuadr\xE1\
+      tica\n        x2 = np.multiply(x, x)\n        acumulado1 = self.acum_anterior1\
+      \ + np.cumsum(x2)\n        self.acum_anterior1 = acumulado1[N - 1]\n       \
+      \ y1[:] = acumulado1 / self.Ntotales\n\n        # C\xE1lculo de la RMS\n   \
+      \     y2[:] = np.sqrt(y1)\n\n        # C\xE1lculo de la potencia promedio\n\
+      \        y3[:] = np.multiply(y2, y2)\n\n        # C\xE1lculo de la desviaci\xF3\
+      n est\xE1ndar\n        x3 = np.multiply(x - y0, x - y0)\n        acumulado2\
+      \ = self.acum_anterior2 + np.cumsum(x3)\n        self.acum_anterior2 = acumulado2[N\
+      \ - 1]\n        y4[:] = np.sqrt(acumulado2 / self.Ntotales)\n\n        return\
+      \ len(x)\n\n"
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    _io_cache: ('Promedios_de_tiempos', 'blk', [], [('0', 'float', 1)], [('0', 'float',
+      1), ('1', 'float', 1), ('2', 'float', 1), ('3', 'float', 1), ('4', 'float',
+      1)], '', [])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [584, 368.0]
+    rotation: 0
+    state: true
+- name: qtgui_number_sink_0
+  id: qtgui_number_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    autoscale: 'True'
+    avg: '0'
+    color1: ("black", "black")
+    color10: ("black", "black")
+    color2: ("black", "black")
+    color3: ("black", "black")
+    color4: ("black", "black")
+    color5: ("black", "black")
+    color6: ("black", "black")
+    color7: ("black", "black")
+    color8: ("black", "black")
+    color9: ("black", "black")
+    comment: ''
+    factor1: '1'
+    factor10: '1'
+    factor2: '1'
+    factor3: '1'
+    factor4: '1'
+    factor5: '1'
+    factor6: '1'
+    factor7: '1'
+    factor8: '1'
+    factor9: '1'
+    graph_type: qtgui.NUM_GRAPH_HORIZ
+    gui_hint: ''
+    label1: ''
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    max: '1'
+    min: '-1'
+    name: VALOR PROMEDIO
+    nconnections: '1'
+    type: float
+    unit1: ''
+    unit10: ''
+    unit2: ''
+    unit3: ''
+    unit4: ''
+    unit5: ''
+    unit6: ''
+    unit7: ''
+    unit8: ''
+    unit9: ''
+    update_time: '0.10'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1000, 244.0]
+    rotation: 0
+    state: true
+- name: qtgui_number_sink_0_0
+  id: qtgui_number_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    autoscale: 'True'
+    avg: '0'
+    color1: ("black", "black")
+    color10: ("black", "black")
+    color2: ("black", "black")
+    color3: ("black", "black")
+    color4: ("black", "black")
+    color5: ("black", "black")
+    color6: ("black", "black")
+    color7: ("black", "black")
+    color8: ("black", "black")
+    color9: ("black", "black")
+    comment: ''
+    factor1: '1'
+    factor10: '1'
+    factor2: '1'
+    factor3: '1'
+    factor4: '1'
+    factor5: '1'
+    factor6: '1'
+    factor7: '1'
+    factor8: '1'
+    factor9: '1'
+    graph_type: qtgui.NUM_GRAPH_HORIZ
+    gui_hint: ''
+    label1: ''
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    max: '1'
+    min: '-1'
+    name: MEDIA CUADRATICA
+    nconnections: '1'
+    type: float
+    unit1: ''
+    unit10: ''
+    unit2: ''
+    unit3: ''
+    unit4: ''
+    unit5: ''
+    unit6: ''
+    unit7: ''
+    unit8: ''
+    unit9: ''
+    update_time: '0.10'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [992, 356.0]
+    rotation: 0
+    state: true
+- name: qtgui_number_sink_0_1
+  id: qtgui_number_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    autoscale: 'True'
+    avg: '0'
+    color1: ("black", "black")
+    color10: ("black", "black")
+    color2: ("black", "black")
+    color3: ("black", "black")
+    color4: ("black", "black")
+    color5: ("black", "black")
+    color6: ("black", "black")
+    color7: ("black", "black")
+    color8: ("black", "black")
+    color9: ("black", "black")
+    comment: ''
+    factor1: '1'
+    factor10: '1'
+    factor2: '1'
+    factor3: '1'
+    factor4: '1'
+    factor5: '1'
+    factor6: '1'
+    factor7: '1'
+    factor8: '1'
+    factor9: '1'
+    graph_type: qtgui.NUM_GRAPH_HORIZ
+    gui_hint: ''
+    label1: ''
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    max: '1'
+    min: '-1'
+    name: RMS
+    nconnections: '1'
+    type: float
+    unit1: ''
+    unit10: ''
+    unit2: ''
+    unit3: ''
+    unit4: ''
+    unit5: ''
+    unit6: ''
+    unit7: ''
+    unit8: ''
+    unit9: ''
+    update_time: '0.10'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1000, 468.0]
+    rotation: 0
+    state: true
+- name: qtgui_number_sink_0_2
+  id: qtgui_number_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    autoscale: 'True'
+    avg: '0'
+    color1: ("black", "black")
+    color10: ("black", "black")
+    color2: ("black", "black")
+    color3: ("black", "black")
+    color4: ("black", "black")
+    color5: ("black", "black")
+    color6: ("black", "black")
+    color7: ("black", "black")
+    color8: ("black", "black")
+    color9: ("black", "black")
+    comment: ''
+    factor1: '1'
+    factor10: '1'
+    factor2: '1'
+    factor3: '1'
+    factor4: '1'
+    factor5: '1'
+    factor6: '1'
+    factor7: '1'
+    factor8: '1'
+    factor9: '1'
+    graph_type: qtgui.NUM_GRAPH_HORIZ
+    gui_hint: ''
+    label1: ''
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    max: '1'
+    min: '-1'
+    name: POTENCIA PROMEDIO
+    nconnections: '1'
+    type: float
+    unit1: ''
+    unit10: ''
+    unit2: ''
+    unit3: ''
+    unit4: ''
+    unit5: ''
+    unit6: ''
+    unit7: ''
+    unit8: ''
+    unit9: ''
+    update_time: '0.10'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1000, 580.0]
+    rotation: 0
+    state: true
+- name: qtgui_number_sink_0_3
+  id: qtgui_number_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    autoscale: 'True'
+    avg: '0'
+    color1: ("black", "black")
+    color10: ("black", "black")
+    color2: ("black", "black")
+    color3: ("black", "black")
+    color4: ("black", "black")
+    color5: ("black", "black")
+    color6: ("black", "black")
+    color7: ("black", "black")
+    color8: ("black", "black")
+    color9: ("black", "black")
+    comment: ''
+    factor1: '1'
+    factor10: '1'
+    factor2: '1'
+    factor3: '1'
+    factor4: '1'
+    factor5: '1'
+    factor6: '1'
+    factor7: '1'
+    factor8: '1'
+    factor9: '1'
+    graph_type: qtgui.NUM_GRAPH_HORIZ
+    gui_hint: ''
+    label1: ''
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    max: '1'
+    min: '-1'
+    name: DESVIACION ESTANDAR
+    nconnections: '1'
+    type: float
+    unit1: ''
+    unit10: ''
+    unit2: ''
+    unit3: ''
+    unit4: ''
+    unit5: ''
+    unit6: ''
+    unit7: ''
+    unit8: ''
+    unit9: ''
+    update_time: '0.10'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1000, 700.0]
+    rotation: 0
+    state: true
 - name: qtgui_time_sink_x_0
   id: qtgui_time_sink_x
   parameters:
@@ -324,9 +726,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1056, 580.0]
+    coordinate: [2184, 364.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: qtgui_time_sink_x_0_0
   id: qtgui_time_sink_x
   parameters:
@@ -421,9 +823,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1056, 380.0]
+    coordinate: [2184, 164.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: qtgui_time_sink_x_0_0_0
   id: qtgui_time_sink_x
   parameters:
@@ -518,7 +920,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1056, 188.0]
+    coordinate: [992, 148.0]
     rotation: 0
     state: enabled
 
@@ -526,12 +928,19 @@ connections:
 - [analog_sig_source_x_0, '0', blocks_throttle_0, '0']
 - [analog_sig_source_x_0_0, '0', blocks_throttle_0_1, '0']
 - [analog_sig_source_x_0_0_0, '0', blocks_throttle_0_1_0, '0']
+- [analog_sig_source_x_0_1, '0', blocks_throttle_0_0, '0']
 - [blocks_throttle_0, '0', epy_block_0, '0']
+- [blocks_throttle_0_0, '0', epy_block_2, '0']
 - [blocks_throttle_0_1, '0', epy_block_1, '0']
 - [blocks_throttle_0_1_0, '0', qtgui_time_sink_x_0_0_0, '0']
 - [epy_block_0, '0', qtgui_time_sink_x_0, '0']
 - [epy_block_1, '0', qtgui_time_sink_x_0_0, '0']
+- [epy_block_2, '0', qtgui_number_sink_0, '0']
+- [epy_block_2, '1', qtgui_number_sink_0_0, '0']
+- [epy_block_2, '2', qtgui_number_sink_0_1, '0']
+- [epy_block_2, '3', qtgui_number_sink_0_2, '0']
+- [epy_block_2, '4', qtgui_number_sink_0_3, '0']
 
 metadata:
   file_format: 1
-  grc_version: 3.9.8.0
+  grc_version: 3.10.7.0
